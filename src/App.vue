@@ -61,6 +61,18 @@ export default {
 
       return this.id
     }
+  },
+  watch: {
+    isReady: function (val, old) {
+      if (val && !old) {
+        console.log({
+          id: this.id,
+          token: this.token,
+          lat: this.pos.coords.latitude,
+          lon: this.pos.coords.longitude
+        })
+      }
+    }
   }
 }
 </script>
