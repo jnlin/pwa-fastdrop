@@ -15,12 +15,19 @@ import Permission from './components/Permission'
 import UploadFile from './components/UploadFile'
 
 import randomWords from 'random-words'
+import * as firebase from 'firebase'
+
+import * as config from './config.js'
+
+firebase.initializeApp(config.firebaseConfig)
+const messaging = firebase.messaging()
 
 export default {
   name: 'App',
   data: () => {
     return {
       id: '',
+      token: '',
       geolocation: false,
       notification: false
     }
@@ -37,6 +44,10 @@ export default {
   methods: {
     hasNotification () {
       this.notification = true
+      messaging.usePublicVapidKey(config.notificationConfig.credential)
+      messaging.getToken().then((token) => {
+        this.token = token
+      })
     },
     hasGeolocation () {
       this.geolocation = true
