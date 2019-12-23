@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     isReady: function () {
-      return this.notification && this.geolocation
+      return this.notification && this.geolocation && this.token
     }
   },
   components: {
