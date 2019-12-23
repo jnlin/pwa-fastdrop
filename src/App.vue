@@ -14,7 +14,7 @@
 import Permission from './components/Permission'
 import UploadFile from './components/UploadFile'
 
-var randomWords = require('random-words')
+import randomWords from 'random-words'
 
 export default {
   name: 'App',
