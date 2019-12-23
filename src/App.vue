@@ -11,10 +11,10 @@
 </template>
 
 <script>
-var randomWords = require('random-words');
-
 import Permission from './components/Permission'
 import UploadFile from './components/UploadFile'
+
+var randomWords = require('random-words')
 
 export default {
   name: 'App',
