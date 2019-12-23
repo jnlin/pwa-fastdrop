@@ -20,6 +20,7 @@ export default {
   name: 'App',
   data: () => {
     return {
+      id: '',
       geolocation: false,
       notification: false
     }
@@ -42,7 +43,11 @@ export default {
       this.pos = pos
     },
     getId () {
-      return randomWords() + Math.round(Math.random() * 1000)
+      if (!this.id) {
+        this.id = randomWords() + Math.round(Math.random() * 1000)
+      }
+
+      return this.id
     }
   }
 }
