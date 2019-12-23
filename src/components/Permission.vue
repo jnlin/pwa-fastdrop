@@ -21,7 +21,7 @@ export default {
     askPermission (event) {
       event.target.disabled = this.loading = true
       navigator.geolocation.getCurrentPosition(
-        (pos) => { this.$emit('hasGeolocation') },
+        (pos) => { this.$emit('hasGeolocation', pos) },
         (err) => { if (err) { alert('無法取得位置') } }
       )
       Notification.requestPermission().then((permission) => {

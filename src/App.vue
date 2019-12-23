@@ -27,6 +27,7 @@ export default {
   data: () => {
     return {
       id: '',
+      pos: '',
       token: '',
       geolocation: false,
       notification: false
@@ -49,7 +50,7 @@ export default {
         this.token = token
       })
     },
-    hasGeolocation () {
+    hasGeolocation (pos) {
       this.geolocation = true
       this.pos = pos
     },
