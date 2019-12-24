@@ -75,7 +75,7 @@ exports.cleanupExpiredUsers = functions.pubsub.schedule('every 15 minutes').onRu
             const tm = Date.now();
 
             if (tm - data.timestamp * 100 > 60000) {
-                snapshot.child(data.id).removeValue();
+                snapshot.child(data.id).ref.remove();
             }
         }
     });
