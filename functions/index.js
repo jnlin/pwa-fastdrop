@@ -62,3 +62,22 @@ exports.createClient = functions.https.onRequest(async (req, res) => {
         res.json(ret);
     });
 });
+
+exports.cleanupExpiredUsers = functions.pubsub.schedule('every 15 minutes').onRun((context) => {
+    var db = admin.database(),
+        ref = db.ref('/clients');
+
+    ref.on('value', (snapshot) => {
+        const val = snapshot.val();
+
+        for (var i in val) {
+            let data = val[i];
+            const tm = Date.now();
+
+            if (tm - data.timestamp * 100 > 60000) {
+                snapshot.child(data.id).removeValue();
+            }
+        }
+    });
+    return null;
+});
