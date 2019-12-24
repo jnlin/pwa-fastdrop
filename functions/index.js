@@ -46,7 +46,6 @@ exports.createClient = functions.https.onRequest(async (req, res) => {
             timestamp: data.timestamp
           })
         }
-
     }, (errorObject) => {
         cors (req, res, () => {
             res.status(500).send('Read failed: ' + errorObject.code);
