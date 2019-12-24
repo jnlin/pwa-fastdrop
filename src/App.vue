@@ -6,7 +6,7 @@
     </b-navbar>
     <b-alert show variant="primary" type="dark" v-if="!isReady">為了找到附近的人，請允許定位與推播</b-alert>
     <Permission v-on:hasGeolocation="hasGeolocation" v-on:hasNotification="hasNotification" v-if="!isReady"/>
-    <UploadFile v-if="isReady" v-bind:id="getId()"/>
+    <UploadFile v-if="isReady" v-bind:id="getId()" v-bind:users="users"/>
   </div>
 </template>
 
@@ -15,6 +15,7 @@ import Permission from './components/Permission'
 import UploadFile from './components/UploadFile'
 
 import randomWords from 'random-words'
+import axios from 'axios'
 import * as firebase from 'firebase'
 
 import * as config from './config.js'
@@ -29,6 +30,7 @@ export default {
       id: '',
       pos: '',
       token: '',
+      users: [],
       geolocation: false,
       notification: false
     }
@@ -64,6 +66,7 @@ export default {
   },
   watch: {
     id: function (val, old) {
+      var that = this
       if (!val || old) {
         return
       }
@@ -74,6 +77,10 @@ export default {
         lat: this.pos.coords.latitude,
         lon: this.pos.coords.longitude
       }
+
+      axios.post(config.api.endpoint + '/createClient', data).then(function (response) {
+        that.users = response.data
+      })
     }
   }
 }

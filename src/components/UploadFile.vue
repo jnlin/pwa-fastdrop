@@ -13,8 +13,11 @@
       </b-row>
     </b-container>
     <b-container style="margin-top: 10px">
+      <span>請選擇傳送對象</span>
       <b-row align-h="center">
-        <b-button variant="info" @click="uploadFile">分享</b-button>
+        <b-col v-for="user in users" :key="user.id" style="margin-top: 10px">
+          <b-button variant="info" @click="uploadFile">{{user.id}}</b-button>
+        </b-col>
       </b-row>
     </b-container>
   </div>
@@ -26,6 +29,10 @@ export default {
   props: {
     id: {
       type: String,
+      required: true
+    },
+    users: {
+      type: Array,
       required: true
     }
   },
