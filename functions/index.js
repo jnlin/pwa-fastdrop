@@ -30,11 +30,23 @@ exports.createClient = functions.https.onRequest(async (req, res) => {
 
     ref.on('value', (snapshot) => {
         const val = snapshot.val();
-        // 濾掉自己
-        if (val[data.id]) {
-            return;
+
+        for (var i in val) {
+          let data = val[i]
+
+          if (i === body.id) {
+            // 濾掉自己
+            continue;
+          }
+
+          ret.unshift({
+            id: data.id,
+            lat: data.lat,
+            lon: data.lon,
+            timestamp: data.timestamp
+          })
         }
-        ret.unshift(Object.values(val)[0]);
+
     }, (errorObject) => {
         cors (req, res, () => {
             res.status(500).send('Read failed: ' + errorObject.code);
