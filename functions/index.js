@@ -41,7 +41,7 @@ exports.createClient = functions.https.onRequest(async (req, res) => {
           }
 
           if (tm - data.timestamp * 100 > 60000) {
-              // 濾掉 15 秒沒出現過的 id
+              // 濾掉 60 秒沒出現過的 id
               continue;
           }
 
