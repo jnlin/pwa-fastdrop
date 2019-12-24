@@ -33,10 +33,16 @@ exports.createClient = functions.https.onRequest(async (req, res) => {
 
         for (var i in val) {
           let data = val[i]
+          const tm = Date.now()
 
           if (i === body.id) {
             // 濾掉自己
             continue;
+          }
+
+          if (tm - data.timestamp * 100 > 60000) {
+              // 濾掉 15 秒沒出現過的 id
+              continue;
           }
 
           ret.unshift({
