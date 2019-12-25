@@ -24,6 +24,9 @@
 </template>
 
 <script>
+import axios from 'axios'
+import * as config from '../config.js'
+
 export default {
   name: 'UploadFile',
   props: {
@@ -38,7 +41,12 @@ export default {
   },
   methods: {
     uploadFile (event) {
+      const id = event.target.innerText
       event.target.disabled = true
+
+      axios.post(config.api.endpoint + '/notifyClient?id=' + id + '&from=' + this.id).then(function (response) {
+        console.log(response)
+      })
     }
   }
 }
