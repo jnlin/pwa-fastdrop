@@ -63,6 +63,45 @@ exports.createClient = functions.https.onRequest(async (req, res) => {
     });
 });
 
+exports.notifyClient = functions.https.onRequest(async (req, res) => {
+    var db = admin.database(),
+        ref = db.ref('/clients/' + req.query.id),
+        from = req.query.from,
+        ret;
+
+    await ref.on('value', (snapshot) => {
+        cors (req, res, () => {
+            ret = snapshot.val();
+        });
+    })
+
+    if (!ret || !ret.id) {
+        cors (req, res, () => {
+            res.status(404).json({'status': '404'});
+        });
+        return;
+    }
+
+    // send notification
+    var message = {
+        data: {
+            sender: from,
+            body: from + ' wants to share some file with you.'
+        },
+        token: ret.token
+    };
+
+    await admin.messaging().send(message)
+        .then((response) => {
+            res.json({'status': 200});
+            return true;
+        }).catch((error) => {
+            res.json({'status': error.code});
+            console.log(error);
+        });
+
+});
+
 exports.cleanupExpiredUsers = functions.pubsub.schedule('every 15 minutes').onRun((context) => {
     var db = admin.database(),
         ref = db.ref('/clients');
