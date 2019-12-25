@@ -51,6 +51,9 @@ export default {
       messaging.getToken().then((token) => {
         this.token = token
       })
+      messaging.onMessage((payload) => {
+        confirm(payload.data.sender + '想要分享檔案給你，是否接收？')
+      })
     },
     hasGeolocation (pos) {
       this.geolocation = true
