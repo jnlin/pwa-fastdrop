@@ -28,7 +28,7 @@ exports.createClient = functions.https.onRequest(async (req, res) => {
     var ret = [],
         ref = db.ref('/clients');
 
-    ref.on('value', (snapshot) => {
+    await ref.on('value', (snapshot) => {
         const val = snapshot.val();
 
         for (var i in val) {
