@@ -6,7 +6,7 @@
     </b-navbar>
     <b-alert show variant="primary" type="dark" v-if="!isReady">為了找到附近的人，請允許定位與推播</b-alert>
     <Permission v-on:hasGeolocation="hasGeolocation" v-on:hasNotification="hasNotification" v-if="!isReady"/>
-    <UploadFile v-if="isReady" v-bind:id="getId()" v-bind:users="users"/>
+    <UploadFile v-if="isReady" v-on:uploadFiles="uploadFiles" v-bind:id="getId()" v-bind:users="users"/>
   </div>
 </template>
 
@@ -62,9 +62,21 @@ export default {
     getId () {
       if (!this.id) {
         this.id = randomWords() + Math.round(Math.random() * 1000)
+        firebase.auth().signInAnonymously()
       }
 
       return this.id
+    },
+    uploadFiles (files) {
+      var storage = firebase.storage()
+      var storageRef = storage.ref()
+
+      for (var i in files) {
+        var remoteFile = storageRef.child(files[i].name.toLowerCase())
+        remoteFile.put(files[i]).then(function (snapshot) {
+          console.log('Upload ' + files[i].name + ' successfully.')
+        })
+      }
     }
   },
   watch: {

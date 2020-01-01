@@ -39,6 +39,8 @@ export default {
   methods: {
     uploadFile (event) {
       event.target.disabled = true
+
+      this.$emit('uploadFiles', this.file)
     }
   }
 }
