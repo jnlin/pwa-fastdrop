@@ -69,10 +69,8 @@ exports.notifyClient = functions.https.onRequest(async (req, res) => {
         from = req.query.from,
         ret;
 
-    await ref.on('value', (snapshot) => {
-        cors (req, res, () => {
-            ret = snapshot.val();
-        });
+    await ref.once('value', (snapshot) => {
+        ret = snapshot.val();
     })
 
     if (!ret || !ret.id) {
