@@ -6,8 +6,9 @@
     </b-navbar>
     <b-alert show variant="primary" type="dark" v-if="!isReady">為了找到附近的人，請允許定位與推播</b-alert>
     <Permission v-on:hasGeolocation="hasGeolocation" v-on:hasNotification="hasNotification" v-if="!isReady"/>
-    <UploadFile v-if="isReady && !isUploaded" v-on:uploadFiles="uploadFiles" v-bind:id="getId()" v-bind:users="users"/>
-    <DownloadFile v-if="isUploaded" v-bind:id="remoteId" v-bind:files="files" v-on:downloadFile="downloadFile"/>
+    <UploadFile v-if="isReady && !isUploaded & remoteId === ''" v-on:uploadFiles="uploadFiles" v-bind:id="getId()" v-bind:users="users"/>
+    <b-alert show variant="info" v-if="isUploaded">已經成功傳送給: <strong>{{receiverId}}</strong></b-alert>
+    <DownloadFile v-if="remoteId !== ''" v-bind:id="remoteId" v-bind:files="files" v-on:downloadFile="downloadFile"/>
   </div>
 </template>
 
@@ -60,7 +61,23 @@ export default {
         this.token = token
       })
       messaging.onMessage((payload) => {
-        confirm(payload.data.sender + '想要分享檔案給你，是否接收？')
+        const id = payload.data.sender
+        const storage = firebase.storage()
+        const storageRef = storage.ref()
+        const myRef = storageRef.child(id)
+        const that = this
+
+        if (!confirm(id + '想要分享檔案給你，是否接收？')) {
+          return
+        }
+
+        this.remoteId = id
+
+        myRef.listAll().then(function (res) {
+          res.items.forEach(function (itemRef) {
+            that.files.push({ name: itemRef.name })
+          })
+        })
       })
     },
     hasGeolocation (pos) {
@@ -85,9 +102,6 @@ export default {
       for (var i in files) {
         var remoteFile = myRef.child(files[i].name.toLowerCase())
         remoteFile.put(files[i]).then(function (snapshot) {
-          // FIXME: show other part's id
-          that.remoteId = that.id
-          that.files.push({ name: files[i].name.toLowerCase() })
           console.log('Upload ' + files[i].name + ' successfully.')
           if (parseInt(i) === files.length - 1) {
             that.isUploaded = true
