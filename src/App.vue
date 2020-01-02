@@ -6,13 +6,16 @@
     </b-navbar>
     <b-alert show variant="primary" type="dark" v-if="!isReady">為了找到附近的人，請允許定位與推播</b-alert>
     <Permission v-on:hasGeolocation="hasGeolocation" v-on:hasNotification="hasNotification" v-if="!isReady"/>
-    <UploadFile v-if="isReady" v-bind:id="getId()" v-bind:users="users"/>
+    <UploadFile v-if="isReady && !isUploaded" v-on:uploadFiles="uploadFiles" v-bind:id="getId()" v-bind:users="users"/>
+    <DownloadFile v-if="isUploaded" v-bind:id="remoteId" v-bind:files="files" v-on:downloadFile="downloadFile"/>
   </div>
 </template>
 
 <script>
+// TODO: pushnotification && update receiver lists
 import Permission from './components/Permission'
 import UploadFile from './components/UploadFile'
+import DownloadFile from './components/DownloadFile'
 
 import randomWords from 'random-words'
 import axios from 'axios'
@@ -28,11 +31,14 @@ export default {
   data: () => {
     return {
       id: '',
+      remoteId: '',
       pos: '',
       token: '',
       users: [],
+      files: [],
       geolocation: false,
-      notification: false
+      notification: false,
+      isUploaded: false
     }
   },
   computed: {
@@ -42,7 +48,8 @@ export default {
   },
   components: {
     Permission,
-    UploadFile
+    UploadFile,
+    DownloadFile
   },
   methods: {
     hasNotification () {
@@ -62,9 +69,37 @@ export default {
     getId () {
       if (!this.id) {
         this.id = randomWords() + Math.round(Math.random() * 1000)
+        firebase.auth().signInAnonymously()
       }
 
       return this.id
+    },
+    uploadFiles (files) {
+      const storage = firebase.storage()
+      const storageRef = storage.ref()
+      const myRef = storageRef.child(this.id)
+      const that = this
+
+      for (var i in files) {
+        var remoteFile = myRef.child(files[i].name.toLowerCase())
+        remoteFile.put(files[i]).then(function (snapshot) {
+          // FIXME: show other part's id
+          that.remoteId = that.id
+          that.files.push({ name: files[i].name.toLowerCase() })
+          that.isUploaded = true
+          console.log('Upload ' + files[i].name + ' successfully.')
+        })
+      }
+    },
+    downloadFile (file) {
+      const storage = firebase.storage()
+      const storageRef = storage.ref()
+      const myRef = storageRef.child(this.remoteId)
+
+      var remoteFile = myRef.child(file)
+      remoteFile.getDownloadURL().then(function (url) {
+        window.open(url)
+      })
     }
   },
   watch: {

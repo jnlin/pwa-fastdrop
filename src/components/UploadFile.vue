@@ -44,9 +44,13 @@ export default {
       const id = event.target.innerText
       event.target.disabled = true
 
+<<<<<<< HEAD
       axios.post(config.api.endpoint + '/notifyClient?id=' + id + '&from=' + this.id).then(function (response) {
         console.log(response)
       })
+=======
+      this.$emit('uploadFiles', this.file)
+>>>>>>> 35c46cf72548baadad552d425943c941a6ff98ee
     }
   }
 }
