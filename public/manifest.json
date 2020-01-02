@@ -2,8 +2,8 @@
     "short_name": "Fastdrop",
     "name": "Fastdrop",
     "icons": [{
-        "src":"icon.png",
-        "sizes": "80x80",
+        "src": "icon.png",
+        "sizes": "512x512",
         "type": "image/png"
     }],
     "start_url": "https://lily-project-212614.firebaseapp.com",
