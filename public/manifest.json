@@ -1,0 +1,13 @@
+{
+    　"short_name": "Fastdrop",
+    　"name": "Fastdrop",
+    　"icons": [{
+    　　"src":"icon.png",
+    　　"sizes": "80x80",
+    　　"type": "image/png"
+    　}],
+    　"start_url": "http://127.0.0.1:8080/",
+    　"background_color": "#000",
+    　"theme_color": "#536878",
+    　"display": "standalone"
+}
