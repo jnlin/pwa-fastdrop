@@ -31,6 +31,7 @@ export default {
   data: () => {
     return {
       id: '',
+      receiverId: '',
       remoteId: '',
       pos: '',
       token: '',
@@ -74,11 +75,12 @@ export default {
 
       return this.id
     },
-    uploadFiles (files) {
+    uploadFiles (id, files) {
       const storage = firebase.storage()
       const storageRef = storage.ref()
       const myRef = storageRef.child(this.id)
       const that = this
+      this.receiverId = id
 
       for (var i in files) {
         var remoteFile = myRef.child(files[i].name.toLowerCase())
@@ -86,8 +88,10 @@ export default {
           // FIXME: show other part's id
           that.remoteId = that.id
           that.files.push({ name: files[i].name.toLowerCase() })
-          that.isUploaded = true
           console.log('Upload ' + files[i].name + ' successfully.')
+          if (parseInt(i) === files.length - 1) {
+            that.isUploaded = true
+          }
         })
       }
     },
@@ -118,6 +122,15 @@ export default {
 
       axios.post(config.api.endpoint + '/createClient', data).then(function (response) {
         that.users = response.data
+      })
+    },
+    isUploaded: function (val, old) {
+      if (!val) {
+        return
+      }
+
+      axios.post(config.api.endpoint + '/notifyClient?id=' + this.receiverId + '&from=' + this.id).then(function (response) {
+        console.log(response)
       })
     }
   }
